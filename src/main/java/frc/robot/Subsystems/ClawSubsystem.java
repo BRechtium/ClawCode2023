@@ -2,7 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.ClawMechanism;
+package frc.robot.Subsystems;
 import static frc.robot.Constants.Claw.*;
 
 import com.revrobotics.CANSparkMax;
@@ -22,6 +22,7 @@ public class ClawSubsystem extends SubsystemBase {
   double kRotations = 0;
   double hue = 0;
   double prevHue = 0;
+  boolean isClawClosed = false;
   ColorSensorV3 m_colorSensor = new ColorSensorV3(Port.kOnboard);
   public SparkMaxPIDController m_pidController = m_motor.getPIDController();
 
@@ -35,21 +36,9 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {
-    hue = getHue(m_colorSensor.getRawColor());
+  public void periodic() {}
 
-    if (hue > prevHue + 20 || hue < prevHue - 20) {
-      if (kConeMinHue <= hue && hue >= kConeMaxHue) {
-        kRotations = kConeClose / 360;
-        setReference();
-      } else if (kCubeMinHue <= hue && hue <= kCubeMaxHue) {
-        kRotations = kCubeClose / 360 ;
-        setReference();
-      }
-      
-    }
-  }
-
+  /* 
   public void setRotations(double rotations) {
     kRotations = rotations;
   }
@@ -57,16 +46,51 @@ public class ClawSubsystem extends SubsystemBase {
   public double getRotations() {
     return kRotations;
   }
-  public void setReference() {
-    m_pidController.setReference(kRotations, ControlType.kPosition);
+  */
+  public void move(double rotations) {
+    m_pidController.setReference(rotations, ControlType.kPosition);
   }
 
-  public double getHue (RawColor color) {
-    double Red = color.red;
-    double Blue = color.blue;
-    double Green = color.green;
-    double preHue = 0;
+  public void setReference(double rotations) {
+    if (isClawClosed = false) {
+      isClawClosed = true;
+      move(rotations);
+    } else {
+      isClawClosed = false;
+      setReference(kOpen);
+    }
+  }
 
+  /* 
+  public void openCloseCheck() { // Linked to Option 2 in RobotContainer, OUTDATED BY setReference();
+    if (isClawClosed = false) {
+      isClawClosed = true;
+    } else {
+      isClawClosed = false;
+      setReference(kOpen);
+  }
+  */
+
+  public void colorCheck() {
+    hue = getHue(m_colorSensor.getRawColor());
+    
+      if (kConeMinHue <= hue && hue <= kConeMaxHue) {
+        kRotations = kConeClose;
+        setReference(kRotations);
+      } else if (kCubeMinHue <= hue && hue <= kCubeMaxHue) {
+        kRotations = kCubeClose;
+        setReference(kRotations);
+      }
+  }
+
+
+  public double getHue (RawColor color) {
+    double Red = Double.valueOf(color.red);
+    double Blue = Double.valueOf(color.blue);
+    double Green = Double.valueOf(color.green);
+    double preHue = 0;
+    
+    
     if (Red == Math.max(Red, Math.max(Green, Blue))) {
       preHue = (Green - Blue) / (Red - Math.min(Green, Blue));
     } else if (Green == Math.max(Red, Math.max(Green, Blue))) {

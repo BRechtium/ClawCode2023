@@ -24,16 +24,16 @@ public class RobotContainer {
   }
 
   private void configureBindings() {
-    new JoystickButton(m_joystick, 7).onTrue(new InstantCommand(() -> m_clawSubsystem.setRotations(kCubeClose))); // Optional
-    new JoystickButton(m_joystick, 6).onTrue(new InstantCommand(() -> m_clawSubsystem.setRotations(kConeClose))); // Optional
+    new JoystickButton(m_joystick, 3).onTrue(new InstantCommand(() -> m_clawSubsystem.setReference(kCubeClose)));
+    new JoystickButton(m_joystick, 4).onTrue(new InstantCommand(() -> m_clawSubsystem.setReference(kConeClose))); 
    
-    new JoystickButton(m_joystick, 1).onTrue(new InstantCommand(() -> m_clawSubsystem.colorCheck())); // To close the claw
+    new JoystickButton(m_joystick, 2).onTrue(new InstantCommand(() -> m_clawSubsystem.colorCheck())); // To close the claw (with color sensor)
 
-    new JoystickButton(m_joystick, 5).onTrue(new InstantCommand(() -> m_clawSubsystem.setRotations(kOpen))); // Option 1: Open claw 
-                                                                                                                //with different button
-    if (m_joystick.getRawButtonReleased(1)) {  // Option 2: Open claw when button is released
-      m_clawSubsystem.setRotations(kOpen);
+    /*
+    if (m_joystick.getRawButtonPressed(6)) { // Option 2 to Open: Toggle switch (OUTDATED BY setReference();)
+      m_clawSubsystem.openCloseCheck();
     }
+    */
   }
 
   public Command getAutonomousCommand() {

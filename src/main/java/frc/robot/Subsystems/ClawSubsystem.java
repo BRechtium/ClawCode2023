@@ -20,7 +20,7 @@ public class ClawSubsystem extends SubsystemBase {
   /** Creates a new ClawSubsystem. */
   CANSparkMax m_motor = new CANSparkMax(0, MotorType.kBrushless);
  
-  double m_Rotations = 0;
+  double m_rotations = 0;
   double m_CurrentButton = 0;
   double hue = 0;
   double prevHue = 0;
@@ -41,16 +41,16 @@ public class ClawSubsystem extends SubsystemBase {
 
   @Override
   public void periodic() {
-    
+    setReference(m_rotations);
   }
 
    
   public void setRotations(double rotations) {
-    m_Rotations = rotations;
+    m_rotations = rotations;
   }
 
   public double getRotations() {
-    return m_Rotations;
+    return m_rotations;
   }
   
 
@@ -69,7 +69,7 @@ public class ClawSubsystem extends SubsystemBase {
   public double getCurrentButton() {
     return m_CurrentButton;
   }
- // C
+ 
   public void setReference(double rotations) {
     if (!triggerState) {  
       if (isClawClosed = false) {
@@ -77,7 +77,7 @@ public class ClawSubsystem extends SubsystemBase {
         move(rotations);
       } else {
         isClawClosed = false;
-        setReference(kOpen);
+        move(kOpen);
       }
     }
 
@@ -90,25 +90,15 @@ public class ClawSubsystem extends SubsystemBase {
     }
   }
 
-  /* 
-  public void openCloseCheck() { // Linked to Option 2 in RobotContainer, OUTDATED BY setReference();
-    if (isClawClosed = false) {
-      isClawClosed = true;
-    } else {
-      isClawClosed = false;
-      setReference(kOpen);
-  }
-  */
-
   public void colorCheck() {
     hue = getHue(m_colorSensor.getRawColor());
     
       if (kConeMinHue <= hue && hue <= kConeMaxHue) {
-        m_Rotations = kConeClose;
-        setReference(m_Rotations);
+        m_rotations = kConeClose;
+        setReference(m_rotations);
       } else if (kCubeMinHue <= hue && hue <= kCubeMaxHue) {
-        m_Rotations = kCubeClose;
-        setReference(m_Rotations);
+        m_rotations = kCubeClose;
+        setReference(m_rotations);
       }
   }
 

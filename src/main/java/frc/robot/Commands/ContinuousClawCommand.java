@@ -9,43 +9,39 @@ import frc.robot.Subsystems.ClawSubsystem;
 import static frc.robot.Constants.Claw.*;
 
 public class ContinuousClawCommand extends CommandBase {
-  ClawSubsystem m_clawSubsystem = new ClawSubsystem();
+  ClawSubsystem m_clawSubsystem;
   boolean triggerState = false;
-  double m_Rotations = 0;
+  double m_rotations = 0;
   double m_CurrentButton = 0;
 
   public ContinuousClawCommand(ClawSubsystem clawSubsystem) {
     addRequirements(clawSubsystem);
+    m_clawSubsystem = clawSubsystem;
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     m_clawSubsystem.setTriggerState(true);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     m_CurrentButton = m_clawSubsystem.getCurrentButton();
 
-    if (m_CurrentButton == 3) {
-      m_Rotations += kCloseClawRate;
-    m_clawSubsystem.setReference(m_Rotations);
-    } else if (m_CurrentButton == 4) {
-      m_Rotations += kOpenClawRate;
-
-    m_clawSubsystem.setReference(m_Rotations); // C
+    if (m_CurrentButton == 3 && m_rotations < kContLimit - 0.01) {
+      m_rotations += kCloseClawRate;
+    } else if (m_CurrentButton == 4 && m_rotations < kContLimit + 0.01) {
+      m_rotations += kOpenClawRate;
     }
+
+    m_clawSubsystem.setRotations(m_rotations);
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     m_clawSubsystem.setTriggerState(false);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     return false;

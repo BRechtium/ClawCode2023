@@ -80,14 +80,6 @@ public class ClawSubsystem extends SubsystemBase {
         move(kOpen);
       }
     }
-
-    if (rotations == kCubeClose) {
-      m_CurrentButton = 3;
-    } else if (rotations == kConeClose) {
-      m_CurrentButton = 4;
-    } else {
-      m_CurrentButton = 0;
-    }
   }
 
   public void colorCheck() {

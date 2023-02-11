@@ -15,6 +15,9 @@ public final class Constants {
         public static final double kConeClose = 270 / 360; // (In Degrees) Arbitrary, Needs Refinement 
         public static final double kCubeClose = 120 / 360; // (In Degrees) Arbitrary, Needs Refinement
         public static final double kOpen = 0 / 360; // (In Degress) Arbitrary, Needs Refinement
+        public static final double kOpenClawRate = -0.005; // Arbitrary, Needs Refinement
+        public static final double kCloseClawRate = 0.005; // Arbitrary, Needs Refinement
+        public static final double kContLimit = 290 / 360; // (In Degress) Arbitrary, Needs Refinement
     }
 
 }

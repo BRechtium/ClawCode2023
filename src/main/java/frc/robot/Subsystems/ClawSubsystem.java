@@ -12,6 +12,7 @@ import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.ColorSensorV3.RawColor;
 
+import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.I2C.Port;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
@@ -19,12 +20,15 @@ public class ClawSubsystem extends SubsystemBase {
   /** Creates a new ClawSubsystem. */
   CANSparkMax m_motor = new CANSparkMax(0, MotorType.kBrushless);
  
-  double kRotations = 0;
+  double m_Rotations = 0;
+  double m_CurrentButton = 0;
   double hue = 0;
   double prevHue = 0;
   boolean isClawClosed = false;
+  boolean triggerState = false;
   ColorSensorV3 m_colorSensor = new ColorSensorV3(Port.kOnboard);
   public SparkMaxPIDController m_pidController = m_motor.getPIDController();
+  Joystick m_joystick = new Joystick(0);
 
   public ClawSubsystem() {
     m_motor.restoreFactoryDefaults();
@@ -36,28 +40,53 @@ public class ClawSubsystem extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    
+  }
 
-  /* 
+   
   public void setRotations(double rotations) {
-    kRotations = rotations;
+    m_Rotations = rotations;
   }
 
   public double getRotations() {
-    return kRotations;
+    return m_Rotations;
   }
-  */
+  
+
+  public void setTriggerState(boolean state) {
+    triggerState = state;
+  }
+
+  public boolean getTriggerState() {
+    return triggerState;
+  }
+
   public void move(double rotations) {
     m_pidController.setReference(rotations, ControlType.kPosition);
   }
 
+  public double getCurrentButton() {
+    return m_CurrentButton;
+  }
+ // C
   public void setReference(double rotations) {
-    if (isClawClosed = false) {
-      isClawClosed = true;
-      move(rotations);
+    if (!triggerState) {  
+      if (isClawClosed = false) {
+        isClawClosed = true;
+        move(rotations);
+      } else {
+        isClawClosed = false;
+        setReference(kOpen);
+      }
+    }
+
+    if (rotations == kCubeClose) {
+      m_CurrentButton = 3;
+    } else if (rotations == kConeClose) {
+      m_CurrentButton = 4;
     } else {
-      isClawClosed = false;
-      setReference(kOpen);
+      m_CurrentButton = 0;
     }
   }
 
@@ -75,11 +104,11 @@ public class ClawSubsystem extends SubsystemBase {
     hue = getHue(m_colorSensor.getRawColor());
     
       if (kConeMinHue <= hue && hue <= kConeMaxHue) {
-        kRotations = kConeClose;
-        setReference(kRotations);
+        m_Rotations = kConeClose;
+        setReference(m_Rotations);
       } else if (kCubeMinHue <= hue && hue <= kCubeMaxHue) {
-        kRotations = kCubeClose;
-        setReference(kRotations);
+        m_Rotations = kCubeClose;
+        setReference(m_Rotations);
       }
   }
 
